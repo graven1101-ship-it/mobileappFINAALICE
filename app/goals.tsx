@@ -1,7 +1,9 @@
+import { useNavigation } from "@react-navigation/native";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import NavBar from "../components/NavBar";
 
 export default function Index() {
+  const navigation = useNavigation();
   const goals = [
     { name: "Emergencyswqqedes Fund", target: "₽10,000", saved: "$3,500", percentage: 35 },
     { name: "Vacation to Bali", target: "₽5,000", saved: "$1,200", percentage: 24 },
@@ -35,7 +37,9 @@ export default function Index() {
           <Text style={{ fontSize: 14, color: "#666", marginBottom: 16, lineHeight: 20 }}>
             Set clear financial targets, track your progress, and stay motivated to achieve your dreams.
           </Text>
-          <TouchableOpacity style={{ backgroundColor: "#5856D6", paddingVertical: 14, borderRadius: 8, alignItems: "center" }}>
+          <TouchableOpacity 
+            onPress={() => navigation.navigate("addGoals")}
+            style={{ backgroundColor: "#5856D6", paddingVertical: 14, borderRadius: 8, alignItems: "center" }}>
             <Text style={{ color: "#fff", fontSize: 16, fontWeight: "600" }}>+ Add New Goal</Text>
           </TouchableOpacity>
         </View>
