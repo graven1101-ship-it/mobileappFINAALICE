@@ -1,7 +1,9 @@
+import { useRouter } from "expo-router";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import NavBar from "../components/NavBar";
 
 export default function Index() {
+  const router = useRouter();
   const transactions = [
     { category: "Travel", date: "28-11-23", amount: "-₽10,000", icon: "🚗" },
     { category: "Food", date: "24-11-23", amount: "-₽2,000", icon: "🍽️" },
@@ -33,7 +35,7 @@ export default function Index() {
             <Text style={{ fontSize: 32, fontWeight: "bold" }}>
               ₽75,000 <Text style={{ fontSize: 18, fontWeight: "400", color: "#999" }}>/100,000</Text>
             </Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push("addAThome")}>
               <Text style={{ color: "#5856D6", fontSize: 16, fontWeight: "500" }}>Edit</Text>
             </TouchableOpacity>
           </View>
