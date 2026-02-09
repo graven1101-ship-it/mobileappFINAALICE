@@ -1,12 +1,9 @@
-import { Image, ScrollView, Text, TouchableOpacity, View, Switch } from "react-native";
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
-import { useState } from "react";
 import NavBar from "../components/NavBar";
 
 export default function Index() {
   const router = useRouter();
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
 
   const handleSettingPress = (itemName: string) => {
     const routes: { [key: string]: string } = {
@@ -57,14 +54,6 @@ export default function Index() {
         { icon: "👋", name: "Logout" },
       ],
     },
-      
-     {
-      title: "", title: "", title: "", title: "", title: "", title: "", title: "", title: "", title: "", title: "", title: "",
-      items: [
-        { icon: "", name: "" }, { icon: "", name: "" }, 
-       
-      ],
-    },
   ];
 
   return (
@@ -103,8 +92,9 @@ export default function Index() {
             </Text>
 
             {section.items.map((item, itemIdx) => (
-              <View
+              <TouchableOpacity
                 key={itemIdx}
+                onPress={() => handleSettingPress(item.name)}
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
@@ -120,26 +110,8 @@ export default function Index() {
                     {item.name}
                   </Text>
                 </View>
-                {item.name === "Notifications Settings" ? (
-                  <Switch
-                    value={notificationsEnabled}
-                    onValueChange={setNotificationsEnabled}
-                    trackColor={{ false: "#E8E8E8", true: "#81C784" }}
-                    thumbColor={notificationsEnabled ? "#4CAF50" : "#f4f3f4"}
-                  />
-                ) : item.name === "Two-Factor Authentication" ? (
-                  <Switch
-                    value={twoFactorEnabled}
-                    onValueChange={setTwoFactorEnabled}
-                    trackColor={{ false: "#E8E8E8", true: "#81C784" }}
-                    thumbColor={twoFactorEnabled ? "#4CAF50" : "#f4f3f4"}
-                  />
-                ) : (
-                  <TouchableOpacity onPress={() => handleSettingPress(item.name)}>
-                    <Text style={{ fontSize: 16, color: "#999" }}>›</Text>
-                  </TouchableOpacity>
-                )}
-              </View>
+                <Text style={{ fontSize: 16, color: "#999" }}>›</Text>
+              </TouchableOpacity>
             ))}
           </View>
         ))}

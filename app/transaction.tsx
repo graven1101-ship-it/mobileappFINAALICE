@@ -127,6 +127,7 @@ export default function Index() {
             </View>
           ))}
         </View>
+        
       </ScrollView>
 
       <NavBar onAddPress={() => console.log("Add pressed")} />

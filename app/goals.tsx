@@ -45,7 +45,7 @@ export default function Index() {
         </View>
 
         {/* My Existing Goals */}
-        <View style={{ paddingHorizontal: 16, marginBottom: 24 }}>
+        <View style={{ paddingHorizontal: 16, marginBottom: 294 }}>
           <Text style={{ fontSize: 18, fontWeight: "600", marginBottom: 16 }}>My Existing Goals</Text>
 
           {goals.map((goal, idx) => (
