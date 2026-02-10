@@ -2,15 +2,18 @@ import { Image, ScrollView, Text, TouchableOpacity, View, Switch } from "react-n
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import NavBar from "../components/NavBar";
+import { useTheme, colors } from "../context/ThemeContext";
 
 export default function Index() {
   const router = useRouter();
+  const { isDarkMode, toggleDarkMode } = useTheme();
+  const theme = isDarkMode ? colors.dark : colors.light;
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
 
   const handleSettingPress = (itemName: string) => {
     const routes: { [key: string]: string } = {
-      "Account Preferences": "/account",
+      "Account Preferences": "/Account",
       "Password & Account": "/password",
       "Notifications Settings": "/notifications",
       "Change Language": "/language",
@@ -36,7 +39,7 @@ export default function Index() {
         { icon: "👤", name: "Account Preferences" },
         { icon: "🔒", name: "Password & Account" },
         { icon: "🔔", name: "Notifications Settings" },
-        { icon: "🌐", name: "Change Language" },
+      
       ],
     },
     {
@@ -57,24 +60,16 @@ export default function Index() {
         { icon: "👋", name: "Logout" },
       ],
     },
-      
-     {
-      title: "", title: "", title: "", title: "", title: "", title: "", title: "", title: "", title: "", title: "", title: "",
-      items: [
-        { icon: "", name: "" }, { icon: "", name: "" }, 
-       
-      ],
-    },
   ];
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#fff" }}>
+    <View style={{ flex: 1, backgroundColor: theme.background }}>
       <ScrollView
-        style={{ flex: 1, paddingBottom: 80 }}
+        style={{ flex: 1, paddingBottom: 200 }}
         showsVerticalScrollIndicator={false}
       >
         {/* Profile Header */}
-        <View style={{ padding: 16, borderBottomWidth: 1, borderBottomColor: "#E8E8E8" }}>
+        <View style={{ padding: 16, borderBottomWidth: 1, borderBottomColor: theme.border }}>
           <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
             <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
               <Image
@@ -84,10 +79,10 @@ export default function Index() {
                   height: 56,
                   borderRadius: 28,
                   marginRight: 16,
-                  backgroundColor: "#E8E8E8",
+                  backgroundColor: theme.border,
                 }}
               />
-              <Text style={{ fontSize: 20, fontWeight: "600" }}>Allen Kalbo</Text>
+              <Text style={{ fontSize: 20, fontWeight: "600", color: theme.text }}>Allen Kalbo</Text>
             </View>
             <TouchableOpacity>
               <Text style={{ fontSize: 18 }}>✏️</Text>
@@ -98,25 +93,30 @@ export default function Index() {
         {/* Settings Sections */}
         {settingsSections.map((section, sectionIdx) => (
           <View key={sectionIdx} style={{ paddingHorizontal: 16, paddingVertical: 20 }}>
-            <Text style={{ fontSize: 16, fontWeight: "600", marginBottom: 12, color: "#333" }}>
+            <Text style={{ fontSize: 16, fontWeight: "600", marginBottom: 12, color: theme.text }}>
               {section.title}
             </Text>
 
             {section.items.map((item, itemIdx) => (
-              <View
+              <TouchableOpacity
                 key={itemIdx}
+                onPress={() => {
+                  if (item.name !== "Notifications Settings" && item.name !== "Two-Factor Authentication" && item.name !== "Change App Theme") {
+                    handleSettingPress(item.name);
+                  }
+                }}
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "space-between",
                   paddingVertical: 14,
                   borderBottomWidth: itemIdx !== section.items.length - 1 ? 1 : 0,
-                  borderBottomColor: "#E8E8E8",
+                  borderBottomColor: theme.border,
                 }}
               >
                 <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
                   <Text style={{ fontSize: 18, marginRight: 12 }}>{item.icon}</Text>
-                  <Text style={{ fontSize: 16, color: "#333", fontWeight: "500" }}>
+                  <Text style={{ fontSize: 16, color: theme.text, fontWeight: "500" }}>
                     {item.name}
                   </Text>
                 </View>
@@ -124,25 +124,33 @@ export default function Index() {
                   <Switch
                     value={notificationsEnabled}
                     onValueChange={setNotificationsEnabled}
-                    trackColor={{ false: "#E8E8E8", true: "#81C784" }}
+                    trackColor={{ false: theme.border, true: "#81C784" }}
                     thumbColor={notificationsEnabled ? "#4CAF50" : "#f4f3f4"}
                   />
                 ) : item.name === "Two-Factor Authentication" ? (
                   <Switch
                     value={twoFactorEnabled}
                     onValueChange={setTwoFactorEnabled}
-                    trackColor={{ false: "#E8E8E8", true: "#81C784" }}
+                    trackColor={{ false: theme.border, true: "#81C784" }}
                     thumbColor={twoFactorEnabled ? "#4CAF50" : "#f4f3f4"}
                   />
+                ) : item.name === "Change App Theme" ? (
+                  <Switch
+                    value={isDarkMode}
+                    onValueChange={toggleDarkMode}
+                    trackColor={{ false: theme.border, true: "#81C784" }}
+                    thumbColor={isDarkMode ? "#4CAF50" : "#f4f3f4"}
+                  />
                 ) : (
-                  <TouchableOpacity onPress={() => handleSettingPress(item.name)}>
-                    <Text style={{ fontSize: 16, color: "#999" }}>›</Text>
-                  </TouchableOpacity>
+                  <Text style={{ fontSize: 16, color: theme.subtext }}>›</Text>
                 )}
-              </View>
+              </TouchableOpacity>
             ))}
           </View>
         ))}
+        
+        {/* Blank Space */}
+        <View style={{ height: 150 }} />
       </ScrollView>
 
       <NavBar onAddPress={() => console.log("Add pressed")} />

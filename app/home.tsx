@@ -15,7 +15,7 @@ export default function Index() {
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
       <ScrollView
-        style={{ flex: 1, paddingBottom: 80 }}
+        style={{ flex: 1, paddingBottom: 890 }}
         showsVerticalScrollIndicator={false}
       >
         {/* Header */}

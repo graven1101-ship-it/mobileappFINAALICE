@@ -1,120 +1,219 @@
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Image, ScrollView, Text, TouchableOpacity, View, TextInput, Alert } from "react-native";
 import { useRouter } from "expo-router";
+import { useState } from "react";
+import { useTheme, colors } from "../context/ThemeContext";
 import NavBar from "../components/NavBar";
 
-export default function Index() {
+export default function AccountScreen() {
   const router = useRouter();
+  const { isDarkMode } = useTheme();
+  const theme = isDarkMode ? colors.dark : colors.light;
 
-  const handleSettingPress = (itemName: string) => {
-    const routes: { [key: string]: string } = {
-      "Account Preferences": "/account",
-      "Password & Account": "/password",
-      "Notifications Settings": "/notifications",
-      "Change Language": "/language",
-      "Set Financial Goals": "/goals",
-      "Set Budgeting Preferences": "/budgeting",
-      "Manage Your Cards": "/cards",
-      "Track financial progress": "/progress",
-      "Two-Factor Authentication": "/twoFactor",
-      "Change App Theme": "/theme",
-      "Backup Your Account": "/backup",
-      "Logout": "/logout",
-    };
-    const route = routes[itemName];
-    if (route) {
-      router.push(route);
-    }
+  const [isEditing, setIsEditing] = useState(false);
+  const [name, setName] = useState("Allen Kalbo");
+  const [email, setEmail] = useState("allen.kalbo@email.com");
+  const [phone, setPhone] = useState("+1 234 567 8900");
+  const [tempName, setTempName] = useState(name);
+  const [tempEmail, setTempEmail] = useState(email);
+  const [tempPhone, setTempPhone] = useState(phone);
+
+  const handleEditPress = () => {
+    setTempName(name);
+    setTempEmail(email);
+    setTempPhone(phone);
+    setIsEditing(true);
   };
 
-  const settingsSections = [
-    {
-      title: "General Settings",
-      items: [
-        { icon: "👤", name: "Account Preferences" },
-        { icon: "🔒", name: "Password & Account" },
-        { icon: "🔔", name: "Notifications Settings" },
-        { icon: "🌐", name: "Change Language" },
-      ],
-    },
-    {
-      title: "Transactional Settings",
-      items: [
-        { icon: "🎯", name: "Set Financial Goals" },
-        { icon: "📊", name: "Set Budgeting Preferences" },
-        { icon: "💳", name: "Manage Your Cards" },
-        { icon: "📈", name: "Track financial progress" },
-      ],
-    },
-    {
-      title: "Additional Settings",
-      items: [
-        { icon: "🔐", name: "Two-Factor Authentication" },
-        { icon: "🎨", name: "Change App Theme" },
-        { icon: "💾", name: "Backup Your Account" },
-        { icon: "👋", name: "Logout" },
-      ],
-    },
-  ];
+  const handleSave = () => {
+    if (!tempName.trim() || !tempEmail.trim() || !tempPhone.trim()) {
+      Alert.alert("Error", "Please fill in all fields");
+      return;
+    }
+
+    if (!tempEmail.includes("@")) {
+      Alert.alert("Error", "Please enter a valid email");
+      return;
+    }
+
+    setName(tempName);
+    setEmail(tempEmail);
+    setPhone(tempPhone);
+    setIsEditing(false);
+    Alert.alert("Success", "Profile updated successfully");
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+  };
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#fff" }}>
+    <View style={{ flex: 1, backgroundColor: theme.background }}>
       <ScrollView
-        style={{ flex: 1, paddingBottom: 80 }}
+        style={{ flex: 1, paddingBottom: 200 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Profile Header */}
-        <View style={{ padding: 16, borderBottomWidth: 1, borderBottomColor: "#E8E8E8" }}>
+        {/* Header */}
+        <View style={{ padding: 16, borderBottomWidth: 1, borderBottomColor: theme.border }}>
           <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-            <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
-              <Image
-                source={require("../assets/images/react-logo.png")}
-                style={{
-                  width: 56,
-                  height: 56,
-                  borderRadius: 28,
-                  marginRight: 16,
-                  backgroundColor: "#E8E8E8",
-                }}
-              />
-              <Text style={{ fontSize: 20, fontWeight: "600" }}>Allen Kalbo</Text>
-            </View>
-            <TouchableOpacity>
-              <Text style={{ fontSize: 18 }}>✏️</Text>
+            <TouchableOpacity onPress={() => router.back()}>
+              <Text style={{ fontSize: 18, color: "#5856D6", fontWeight: "600" }}>← Back</Text>
             </TouchableOpacity>
+            <Text style={{ fontSize: 18, fontWeight: "600", color: theme.text }}>Account Info</Text>
+            <View style={{ width: 50 }} />
           </View>
         </View>
 
-        {/* Settings Sections */}
-        {settingsSections.map((section, sectionIdx) => (
-          <View key={sectionIdx} style={{ paddingHorizontal: 16, paddingVertical: 20 }}>
-            <Text style={{ fontSize: 16, fontWeight: "600", marginBottom: 12, color: "#333" }}>
-              {section.title}
-            </Text>
+        {/* Profile Section */}
+        <View style={{ padding: 20, alignItems: "center", borderBottomWidth: 1, borderBottomColor: theme.border }}>
+          <Image
+            source={require("../assets/images/react-logo.png")}
+            style={{
+              width: 100,
+              height: 100,
+              borderRadius: 50,
+              backgroundColor: theme.border,
+              marginBottom: 16,
+            }}
+          />
+          {!isEditing && (
+            <TouchableOpacity onPress={handleEditPress} style={{ marginBottom: 12 }}>
+              <Text style={{ fontSize: 14, color: "#5856D6", fontWeight: "600" }}>Edit Profile</Text>
+            </TouchableOpacity>
+          )}
+        </View>
 
-            {section.items.map((item, itemIdx) => (
+        {/* Account Information */}
+        <View style={{ padding: 20 }}>
+          {isEditing && (
+            <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 20 }}>
               <TouchableOpacity
-                key={itemIdx}
-                onPress={() => handleSettingPress(item.name)}
+                onPress={handleCancel}
                 style={{
-                  flexDirection: "row",
+                  flex: 1,
+                  marginRight: 8,
+                  paddingVertical: 12,
+                  backgroundColor: theme.border,
+                  borderRadius: 8,
                   alignItems: "center",
-                  justifyContent: "space-between",
-                  paddingVertical: 14,
-                  borderBottomWidth: itemIdx !== section.items.length - 1 ? 1 : 0,
-                  borderBottomColor: "#E8E8E8",
                 }}
               >
-                <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
-                  <Text style={{ fontSize: 18, marginRight: 12 }}>{item.icon}</Text>
-                  <Text style={{ fontSize: 16, color: "#333", fontWeight: "500" }}>
-                    {item.name}
-                  </Text>
-                </View>
-                <Text style={{ fontSize: 16, color: "#999" }}>›</Text>
+                <Text style={{ color: theme.text, fontWeight: "600" }}>Cancel</Text>
               </TouchableOpacity>
-            ))}
+              <TouchableOpacity
+                onPress={handleSave}
+                style={{
+                  flex: 1,
+                  marginLeft: 8,
+                  paddingVertical: 12,
+                  backgroundColor: "#5856D6",
+                  borderRadius: 8,
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ color: "#fff", fontWeight: "600" }}>Save</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {/* Name Field */}
+          <View style={{ marginBottom: 20 }}>
+            <Text style={{ fontSize: 14, fontWeight: "600", marginBottom: 8, color: theme.text }}>
+              Full Name
+            </Text>
+            {isEditing ? (
+              <TextInput
+                value={tempName}
+                onChangeText={setTempName}
+                style={{
+                  borderWidth: 1,
+                  borderColor: theme.border,
+                  borderRadius: 8,
+                  padding: 12,
+                  fontSize: 16,
+                  color: theme.text,
+                  backgroundColor: isDarkMode ? "#0a0a0a" : "#f9f9f9",
+                }}
+                placeholderTextColor={theme.subtext}
+              />
+            ) : (
+              <View style={{ borderBottomWidth: 1, borderBottomColor: theme.border, paddingVertical: 12 }}>
+                <Text style={{ fontSize: 16, color: theme.text }}>{name}</Text>
+              </View>
+            )}
           </View>
-        ))}
+
+          {/* Email Field */}
+          <View style={{ marginBottom: 20 }}>
+            <Text style={{ fontSize: 14, fontWeight: "600", marginBottom: 8, color: theme.text }}>
+              Email Address
+            </Text>
+            {isEditing ? (
+              <TextInput
+                value={tempEmail}
+                onChangeText={setTempEmail}
+                keyboardType="email-address"
+                style={{
+                  borderWidth: 1,
+                  borderColor: theme.border,
+                  borderRadius: 8,
+                  padding: 12,
+                  fontSize: 16,
+                  color: theme.text,
+                  backgroundColor: isDarkMode ? "#0a0a0a" : "#f9f9f9",
+                }}
+                placeholderTextColor={theme.subtext}
+              />
+            ) : (
+              <View style={{ borderBottomWidth: 1, borderBottomColor: theme.border, paddingVertical: 12 }}>
+                <Text style={{ fontSize: 16, color: theme.text }}>{email}</Text>
+              </View>
+            )}
+          </View>
+
+          {/* Phone Field */}
+          <View style={{ marginBottom: 20 }}>
+            <Text style={{ fontSize: 14, fontWeight: "600", marginBottom: 8, color: theme.text }}>
+              Phone Number
+            </Text>
+            {isEditing ? (
+              <TextInput
+                value={tempPhone}
+                onChangeText={setTempPhone}
+                keyboardType="phone-pad"
+                style={{
+                  borderWidth: 1,
+                  borderColor: theme.border,
+                  borderRadius: 8,
+                  padding: 12,
+                  fontSize: 16,
+                  color: theme.text,
+                  backgroundColor: isDarkMode ? "#0a0a0a" : "#f9f9f9",
+                }}
+                placeholderTextColor={theme.subtext}
+              />
+            ) : (
+              <View style={{ borderBottomWidth: 1, borderBottomColor: theme.border, paddingVertical: 12 }}>
+                <Text style={{ fontSize: 16, color: theme.text }}>{phone}</Text>
+              </View>
+            )}
+          </View>
+
+          {/* Account Details */}
+          <View style={{ backgroundColor: theme.lightBg, borderRadius: 8, padding: 16, marginTop: 20 }}>
+            <Text style={{ fontSize: 14, fontWeight: "600", marginBottom: 12, color: theme.text }}>
+              Account Details
+            </Text>
+            <View style={{ marginBottom: 12 }}>
+              <Text style={{ fontSize: 12, color: theme.subtext }}>Member Since</Text>
+              <Text style={{ fontSize: 14, color: theme.text, marginTop: 4 }}>January 15, 2024</Text>
+            </View>
+            <View>
+              <Text style={{ fontSize: 12, color: theme.subtext }}>Account Status</Text>
+              <Text style={{ fontSize: 14, color: "#4CAF50", marginTop: 4, fontWeight: "600" }}>Active</Text>
+            </View>
+          </View>
+        </View>
+        <View style={{ height: 150 }} />
       </ScrollView>
 
       <NavBar onAddPress={() => console.log("Add pressed")} />
