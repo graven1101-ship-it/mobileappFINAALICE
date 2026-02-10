@@ -15,7 +15,7 @@ export default function Index() {
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
       <ScrollView
-        style={{ flex: 1, paddingBottom: 80 }}
+        style={{ flex: 1, paddingBottom: 890 }}
         showsVerticalScrollIndicator={false}
       >
         {/* Header */}
@@ -60,7 +60,7 @@ export default function Index() {
             <TouchableOpacity>
               <Text style={{ color: "#5856D6", fontSize: 14 }}>Nov ▼</Text>
             </TouchableOpacity>
-          </View>
+          </View> 
 
           {/* Simple Bar Chart */}
           <View style={{ flexDirection: "row", alignItems: "flex-end", justifyContent: "space-around", height: 200 }}>
@@ -100,7 +100,7 @@ export default function Index() {
         </View>
 
         {/* Recent Transactions */}
-        <View style={{ paddingHorizontal: 16, marginBottom: 24 }}>
+        <View style={{ paddingHorizontal: 16, marginBottom: 284 }}>
           <Text style={{ fontSize: 18, fontWeight: "600", marginBottom: 16 }}>Your recent transactions</Text>
 
           {transactions.map((transaction, idx) => (
@@ -125,9 +125,13 @@ export default function Index() {
               <Text style={{ fontSize: 16, fontWeight: "600", color: "#E74C3C" }}>
                 {transaction.amount}
               </Text>
+       
             </View>
           ))}
+          
         </View>
+        
+        
       </ScrollView>
 
       <NavBar onAddPress={() => console.log("Add pressed")} />

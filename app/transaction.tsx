@@ -36,7 +36,7 @@ export default function Index() {
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
       <ScrollView
-        style={{ flex: 1, paddingBottom: 80 }}
+        style={{ flex: 1, paddingBottom: 807 }}
         showsVerticalScrollIndicator={false}
       >
         {/* Header */}
@@ -127,6 +127,7 @@ export default function Index() {
             </View>
           ))}
         </View>
+        <View style={{ height: 150 }} />
       </ScrollView>
 
       <NavBar onAddPress={() => console.log("Add pressed")} />
