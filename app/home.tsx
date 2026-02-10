@@ -1,9 +1,60 @@
 import { useRouter } from "expo-router";
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Image, ScrollView, Text, TouchableOpacity, View, Animated } from "react-native";
+import { useEffect, useRef } from "react";
 import NavBar from "../components/NavBar";
 
 export default function Index() {
   const router = useRouter();
+  const progressAnimation = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    // Animate progress bar from 0 to 75% over 2 seconds
+    Animated.timing(progressAnimation, {
+      toValue: 75,
+      duration: 2000,
+      useNativeDriver: false,
+    }).start();
+  }, [progressAnimation]);
+
+  const progressWidth = progressAnimation.interpolate({
+    inputRange: [0, 100],
+    outputRange: ["0%", "100%"],
+  });
+
+  // Create animated values for each graph bar
+  const barAnimations = useRef([
+    new Animated.Value(0),
+    new Animated.Value(0),
+    new Animated.Value(0),
+    new Animated.Value(0),
+  ]).current;
+
+  useEffect(() => {
+    // Animate all bars simultaneously
+    Animated.stagger(100, [
+      Animated.timing(barAnimations[0], {
+        toValue: 120,
+        duration: 1500,
+        useNativeDriver: false,
+      }),
+      Animated.timing(barAnimations[1], {
+        toValue: 180,
+        duration: 1500,
+        useNativeDriver: false,
+      }),
+      Animated.timing(barAnimations[2], {
+        toValue: 160,
+        duration: 1500,
+        useNativeDriver: false,
+      }),
+      Animated.timing(barAnimations[3], {
+        toValue: 130,
+        duration: 1500,
+        useNativeDriver: false,
+      }),
+    ]).start();
+  }, [barAnimations]);
+
   const transactions = [
     { category: "Travel", date: "28-11-23", amount: "-₽10,000", icon: "🚗" },
     { category: "Food", date: "24-11-23", amount: "-₽2,000", icon: "🍽️" },
@@ -43,7 +94,7 @@ export default function Index() {
           {/* Progress Bar */}
           <View style={{ marginBottom: 16 }}>
             <View style={{ height: 8, backgroundColor: "#E8E8E8", borderRadius: 4, overflow: "hidden" }}>
-              <View style={{ height: "100%", width: "75%", backgroundColor: "#5856D6", borderRadius: 4 }} />
+              <Animated.View style={{ height: "100%", width: progressWidth, backgroundColor: "#5856D6", borderRadius: 4 }} />
             </View>
             <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 8 }}>
               <Text style={{ fontSize: 12, color: "#666" }}>0</Text>
@@ -71,10 +122,10 @@ export default function Index() {
               { label: "Week 4", height: 130 },
             ].map((week, idx) => (
               <View key={idx} style={{ alignItems: "center" }}>
-                <View
+                <Animated.View
                   style={{
                     width: 40,
-                    height: week.height,
+                    height: barAnimations[idx],
                     backgroundColor: "#5856D6",
                     borderRadius: 4,
                     marginBottom: 8,
