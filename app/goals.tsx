@@ -1,5 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View, Animated } from "react-native";
+import { useEffect, useRef } from "react";
 import NavBar from "../components/NavBar";
 
 export default function Index() {
@@ -12,6 +13,25 @@ export default function Index() {
     { name: "Vacation to Bali", target: "₽5,000", saved: "$1,200", percentage: 24 },
     { name: "New Lswwwwwwwwwwsdfsdfsdsdwwwwaptop", target: "₽1,500", saved: "$750", percentage: 50 },
   ];
+
+  // Create animated values for each goal's progress bar
+  const progressAnimations = useRef(
+    goals.map(() => new Animated.Value(0))
+  ).current;
+
+  useEffect(() => {
+    // Animate all progress bars with staggered effect
+    Animated.stagger(
+      100,
+      progressAnimations.map((animation, idx) =>
+        Animated.timing(animation, {
+          toValue: goals[idx].percentage,
+          duration: 1500,
+          useNativeDriver: false,
+        })
+      )
+    ).start();
+  }, [progressAnimations, goals]);
 
   
 
@@ -48,50 +68,57 @@ export default function Index() {
         <View style={{ paddingHorizontal: 16, marginBottom: 294 }}>
           <Text style={{ fontSize: 18, fontWeight: "600", marginBottom: 16 }}>My Existing Goals</Text>
 
-          {goals.map((goal, idx) => (
-            <View
-              key={idx}
-              style={{
-                backgroundColor: "#fff",
-                borderWidth: 1,
-                borderColor: "#E8E8E8",
-                borderRadius: 12,
-                padding: 16,
-                marginBottom: 12,
-              }}
-            >
-              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                <Text style={{ fontSize: 16, fontWeight: "600" }}>{goal.name}</Text>
-                <Text style={{ fontSize: 16, fontWeight: "600", color: "#333" }}>{goal.target}</Text>
-              </View>
+          {goals.map((goal, idx) => {
+            const progressWidth = progressAnimations[idx].interpolate({
+              inputRange: [0, 100],
+              outputRange: ["0%", "100%"],
+            });
 
-              <View style={{ marginBottom: 12 }}>
-                <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 8 }}>
-                  <Text style={{ fontSize: 13, color: "#666" }}>Saved: {goal.saved}</Text>
-                  <Text style={{ fontSize: 13, color: "#666" }}>{goal.percentage}%</Text>
+            return (
+              <View
+                key={idx}
+                style={{
+                  backgroundColor: "#fff",
+                  borderWidth: 1,
+                  borderColor: "#E8E8E8",
+                  borderRadius: 12,
+                  padding: 16,
+                  marginBottom: 12,
+                }}
+              >
+                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                  <Text style={{ fontSize: 16, fontWeight: "600" }}>{goal.name}</Text>
+                  <Text style={{ fontSize: 16, fontWeight: "600", color: "#333" }}>{goal.target}</Text>
                 </View>
-                <View style={{ height: 8, backgroundColor: "#E8E8E8", borderRadius: 4, overflow: "hidden" }}>
-                  <View
-                    style={{
-                      height: "100%",
-                      width: `${goal.percentage}%`,
-                      backgroundColor: "#5856D6",
-                      borderRadius: 4,
-                    }}
-                  />
-                </View>
-              </View>
 
-              <View style={{ flexDirection: "row", justifyContent: "flex-end", gap: 12 }}>
-                <TouchableOpacity>
-                  <Text style={{ fontSize: 18, color: "#5856D6" }}>✏️</Text>
-                </TouchableOpacity>
-                <TouchableOpacity>
-                  <Text style={{ fontSize: 18, color: "#E74C3C" }}>🗑️</Text>
-                </TouchableOpacity>
+                <View style={{ marginBottom: 12 }}>
+                  <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 8 }}>
+                    <Text style={{ fontSize: 13, color: "#666" }}>Saved: {goal.saved}</Text>
+                    <Text style={{ fontSize: 13, color: "#666" }}>{goal.percentage}%</Text>
+                  </View>
+                  <View style={{ height: 8, backgroundColor: "#E8E8E8", borderRadius: 4, overflow: "hidden" }}>
+                    <Animated.View
+                      style={{
+                        height: "100%",
+                        width: progressWidth,
+                        backgroundColor: "#5856D6",
+                        borderRadius: 4,
+                      }}
+                    />
+                  </View>
+                </View>
+
+                <View style={{ flexDirection: "row", justifyContent: "flex-end", gap: 12 }}>
+                  <TouchableOpacity>
+                    <Text style={{ fontSize: 18, color: "#5856D6" }}>✏️</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity>
+                    <Text style={{ fontSize: 18, color: "#E74C3C" }}>🗑️</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
-          ))}
+            );
+          })}
         </View>
         
       </ScrollView>
